@@ -3,6 +3,7 @@ import io from 'socket.io-client';
 import { BehaviorSubject } from 'rxjs';
 import { filter, throttleTime } from 'rxjs/operators';
 import { Message } from '@live-video-example/api-interfaces';
+import { MediaDevicesService } from './media-devices.service';
 
 declare const MediaRecorder: any;
 
@@ -12,6 +13,7 @@ declare const MediaRecorder: any;
   styleUrls: ['./app.component.styl'],
 })
 export class AppComponent implements OnInit {
+  constructor(public readonly mediaDevicesService: MediaDevicesService) {}
   @ViewChild('list')
   listRef: ElementRef;
 
@@ -47,9 +49,12 @@ export class AppComponent implements OnInit {
     return this.listEl.scrollHeight - this.listEl.offsetHeight;
   }
 
-  ngOnInit(): void {
-    this._initSocket();
-    this._initMessage();
+  async ngOnInit() {
+    const r = await this.mediaDevicesService.enumerateDevices();
+    console.log(r);
+
+    // this._initSocket();
+    // this._initMessage();
     // this._initLiveVideo();
   }
 

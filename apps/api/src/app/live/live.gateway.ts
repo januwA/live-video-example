@@ -10,7 +10,6 @@ import { Message } from '@live-video-example/api-interfaces';
 // io.of('/my-namespace');
 @WebSocketGateway({ namespace: 'live' })
 export class LiveGateway {
-
   @WebSocketServer() server;
 
   /**
@@ -26,8 +25,6 @@ export class LiveGateway {
     // 反之需要 this.server.server
     return this.server.server.eio.clientsCount;
   }
-
-  clients = new Map<string, any[]>();
 
   @SubscribeMessage('messages')
   onEvent(client: any, payload: Message): Observable<WsResponse<any>> | any {
@@ -46,30 +43,32 @@ export class LiveGateway {
     this.server.emit('messages', payload);
   }
 
+  /**
+   * 每当用户进入时
+   * @param client
+   * @param payload
+   */
   @SubscribeMessage('join')
   onJoin(
     client: any,
     payload: Message
   ): Observable<WsResponse<any>> | WsResponse<any> | any {
     const id = client.id;
-    if (!this.clients.has(id)) {
-      this.clients.set(id, []);
-    } else {
-      console.log('what? the user is exist');
-    }
-    this.server.emit('join', {
-      message: this.clientsCount,
+
+    this.server.emit('joined', {
+      users: Object.keys(this.server.connected),
       id,
+      message: this.clientsCount,
     });
 
     // 当前客户端，断开连接
     // 通知所有客户端，发送Count,和退出客户端的id
     client.on('disconnect', () => {
       this.server.emit('disconnect', {
-        message: this.clientsCount,
         id,
+        message: this.clientsCount,
+        users: Object.keys(this.server.connected),
       });
-      this.clients.delete(id);
     });
 
     return id;
@@ -77,6 +76,16 @@ export class LiveGateway {
 
   @SubscribeMessage('live')
   onLive(client: any, payload: Message) {
-    console.log(payload);
+    this.server.emit('live', payload);
+  }
+
+  @SubscribeMessage('offer')
+  offer(client: any, payload: any) {
+    this.server.emit('offer', payload);
+  }
+
+  @SubscribeMessage('answer')
+  answer(client: any, payload: any) {
+    this.server.emit('answer', payload);
   }
 }
