@@ -12,6 +12,7 @@ import { GetAudioComponent } from './pages/get-audio/get-audio.component';
 import { GetStracksComponent } from './pages/get-stracks/get-stracks.component';
 import { RecordAudioAndVideoComponent } from './pages/record-audio-and-video/record-audio-and-video.component';
 import { RecordDesktopComponent } from './pages/record-desktop/record-desktop.component';
+import { SocketIoMessageComponent } from './pages/socket-io-message/socket-io-message.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { RecordDesktopComponent } from './pages/record-desktop/record-desktop.co
     GetStracksComponent,
     RecordAudioAndVideoComponent,
     RecordDesktopComponent,
+    SocketIoMessageComponent,
   ],
   imports: [AppRoutingModule, BrowserModule, HttpClientModule],
   providers: [],

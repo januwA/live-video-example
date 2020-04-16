@@ -1,5 +1,5 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import io from 'socket.io-client';
+import * as io from 'socket.io-client';
 import { BehaviorSubject } from 'rxjs';
 import { filter, throttleTime } from 'rxjs/operators';
 import { Message } from '@live-video-example/api-interfaces';

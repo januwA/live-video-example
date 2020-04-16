@@ -1,0 +1,48 @@
+<h2>聊天室({{ userCount }})人</h2>
+
+<section class="connect">
+  <label>
+    Username:
+    <input
+      type="text"
+      placeholder="Username"
+      [value]="username"
+      (change)="username = usernameInput.value"
+      [disabled]="isConnect"
+      #usernameInput
+    />
+  </label>
+  <label>
+    Room Id:
+    <input
+      type="text"
+      [value]="roomName"
+      (change)="roomName = roomIdInput.value"
+      [disabled]="isConnect"
+      #roomIdInput
+    />
+  </label>
+  <button (click)="connect()" [disabled]="isConnect">
+    连接
+  </button>
+  <button (click)="leave()" [disabled]="!isConnect">
+    离开房间
+  </button>
+</section>
+
+<section class="message-container" *ngIf="isConnect">
+  <div>
+    消息区:
+  </div>
+  <ul>
+    <li *ngFor="let it of messgaes">{{ it.username }}: {{ it.message }}</li>
+  </ul>
+</section>
+
+<section class="send-container" *ngIf="isConnect">
+  <div>发送消息:</div>
+  <div>
+    <input type="text" placeholder="Hi..." #msg />
+    <button (click)="send(msg.value); msg.value = ''">发送</button>
+  </div>
+</section>

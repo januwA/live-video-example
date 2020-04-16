@@ -1,20 +1,33 @@
-/**
- * This is not a production server yet!
- * This is only a minimal backend to get started.
- */
+import * as fs from 'fs';
+import * as http from 'http';
+import * as https from 'https';
 
 import { NestFactory } from '@nestjs/core';
+import * as express from 'express';
+import { ExpressAdapter } from '@nestjs/platform-express';
 
 import { AppModule } from './app/app.module';
 
+const httpsOptions = {
+  key: fs.readFileSync('D:/localhost_ssl/dev.ajanuw.com.key'),
+  cert: fs.readFileSync('D:/localhost_ssl/dev.ajanuw.com.crt'),
+};
+const globalPrefix = 'api';
+const port = process.env.port || 3333;
+
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
-  const globalPrefix = 'api';
+  const app = await NestFactory.create(AppModule, {
+    httpsOptions,
+  });
+
   app.setGlobalPrefix(globalPrefix);
-  app.enableCors();
-  const port = process.env.port || 3333;
+  // app.enableCors({
+  //   origin: 'https://dev.ajanuw.com:4200'
+  //   credentials: true,
+  // });
   await app.listen(port, () => {
-    console.log('Listening at http://localhost:' + port + '/' + globalPrefix);
+    console.log(`https://dev.ajanuw.com:${port}/api/hello`);
+    
   });
 }
 

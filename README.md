@@ -19,9 +19,12 @@
 ## 需要的依赖(当然我已经装好了)
 ```sh
 λ npm i --save @nestjs/websockets @nestjs/platform-socket.io
+
+λ npm i --save socket.io
 λ npm i --save-dev @types/socket.io
 
 λ npm i socket.io-client // 客户端
+λ npm i -D @types/socket.io-client
 
 λ npm install webrtc-adapter // 对WebRTC的API进行适配器插件
 
