@@ -60,3 +60,9 @@ import 'zone.js/dist/zone'; // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
+
+
+ /**
+  * web rtc api adapter
+  */
+import adapter from 'webrtc-adapter';

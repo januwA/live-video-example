@@ -50,9 +50,6 @@ export class AppComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const r = await this.mediaDevicesService.enumerateDevices();
-    console.log(r);
-
     // this._initSocket();
     // this._initMessage();
     // this._initLiveVideo();

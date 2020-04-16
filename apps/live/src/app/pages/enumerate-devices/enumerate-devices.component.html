@@ -1,0 +1,10 @@
+<ol>
+  <li *ngFor="let it of enumerateDevices | async">
+    <p>类型: {{ it[0] }}</p>
+    <ul [class]="it.kind" *ngFor="let itt of it[1]">
+      <li>deviceId: {{ itt.deviceId }}</li>
+      <li>label: {{ itt.label }}</li>
+      <li>groupId: {{ itt.groupId }}</li>
+    </ul>
+  </li>
+</ol>

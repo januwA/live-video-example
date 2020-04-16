@@ -22,4 +22,8 @@
 λ npm i --save-dev @types/socket.io
 
 λ npm i socket.io-client // 客户端
+
+λ npm install webrtc-adapter // 对WebRTC的API进行适配器插件
+
+λ npm install -D @types/dom-mediacapture-record  // MediaRecorder类的说明文件
 ```

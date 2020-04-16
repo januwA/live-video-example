@@ -1,0 +1,7 @@
+<video autoplay #video></video>
+
+<div>
+  <button (click)="start()">开始录制</button>
+  <button (click)="stop()" [disabled]='!isStart'>结束录制</button>
+  <button (click)="doanload()" [disabled]='!isStart'>下载</button>
+</div>

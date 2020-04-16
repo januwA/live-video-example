@@ -1,0 +1,8 @@
+<video autoplay #video></video>
+
+<section>
+  <label for="filter">css filter对视频进行简单的特效处理</label>
+  <select id="filter" (change)="change(r_filter.value)" #r_filter>
+    <option *ngFor="let it of filters" [value]="it">{{ it }}</option>
+  </select>
+</section>
