@@ -19,7 +19,7 @@ import {
  * namespace配置对应io.of('/my-namespace');
  */
 @WebSocketGateway({ namespace: 'socket-io-message' })
-export class SocketIoMessage
+export class SocketIoMessageGateway
   implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer() server: Socket;
 

@@ -1,0 +1,13 @@
+<p>红色为本地，蓝色为远端</p>
+<div>
+  <!-- 展示本地视频 -->
+  <video autoplay class="local-video" #localVideo></video>
+</div>
+<div>
+  <!-- 展示远端视频 -->
+  <video autoplay class="remote-video" #remotevideo></video>
+</div>
+<div>
+  <button (click)="connect()" [disabled]="!canPressedConnectButton">连接</button>
+  <button (click)="leave()" [disabled]="canPressedConnectButton">退出</button>
+</div>

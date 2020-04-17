@@ -1,0 +1,14 @@
+<p>红色为本地，蓝色为远端</p>
+<div>
+  <!-- 展示本地视频 -->
+  <video autoplay class="local-video" #localVideo></video>
+</div>
+<div>
+  <!-- 展示远端视频 -->
+  <video autoplay class="remote-video" #remotevideo></video>
+</div>
+<div>
+  <button id="start" (click)="start()">开始</button>
+  <button id="call" (click)="call()">Call</button>
+  <button id="hangup" (click)="hangup()">挂断</button>
+</div>

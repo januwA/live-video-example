@@ -1,8 +1,9 @@
 import { Module } from '@nestjs/common';
 import { LiveGateway } from './live.gateway';
-import { SocketIoMessage } from './socket-io-message.gateway';
+import { SocketIoMessageGateway } from './socket-io-message.gateway';
+import { P2PGateway } from './p2p.gateway';
 
 @Module({
-  providers: [LiveGateway, SocketIoMessage],
+  providers: [LiveGateway, SocketIoMessageGateway, P2PGateway],
 })
 export class LiveModule {}

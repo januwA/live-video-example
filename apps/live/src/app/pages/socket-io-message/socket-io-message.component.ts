@@ -34,13 +34,19 @@ export class SocketIoMessageComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {}
 
+  /**
+   * 清理资源
+   */
   ngOnDestroy(): void {
-    this.leave();
+    if (this.socket) {
+      this.leave();
+      this.socket.close();
+    }
   }
 
   /**
    * 发送消息
-   * @param message 
+   * @param message
    */
   send(message: string) {
     this.socket.emit('message', {
