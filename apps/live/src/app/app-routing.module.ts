@@ -11,6 +11,9 @@ import { RecordDesktopComponent } from './pages/record-desktop/record-desktop.co
 import { SocketIoMessageComponent } from './pages/socket-io-message/socket-io-message.component';
 import { WebrtcP2pComponent } from './pages/webrtc-p2p/webrtc-p2p.component';
 import { LocalP2pComponent } from './pages/local-p2p/local-p2p.component';
+import { WebrtcP2pSharedDesktopComponent } from './pages/webrtc-p2p-shared-desktop/webrtc-p2p-shared-desktop.component';
+import { WebrtcP2pMediaControlComponent } from './pages/webrtc-p2p-media-control/webrtc-p2p-media-control.component';
+import { WebrtcDataChannelComponent } from './pages/webrtc-data-channel/webrtc-data-channel.component';
 
 const routes: Routes = [
   {
@@ -88,6 +91,27 @@ const routes: Routes = [
     component: WebrtcP2pComponent,
     data: {
       title: 'WebRTC 端对端连接',
+    },
+  },
+  {
+    path: 'webrtc-p2p-shared-desktop',
+    component: WebrtcP2pSharedDesktopComponent,
+    data: {
+      title: 'WebRTC 共享桌面',
+    },
+  },
+  {
+    path: 'webrtc-p2p-media-control',
+    component: WebrtcP2pMediaControlComponent,
+    data: {
+      title: 'WebRTC 媒体控制与数据统计',
+    },
+  },
+  {
+    path: 'webrtc-data-channel',
+    component: WebrtcDataChannelComponent,
+    data: {
+      title: 'WebRTC 非音视频数据传输',
     },
   },
 ];

@@ -1,0 +1,47 @@
+<p>红色为本地，蓝色为远端</p>
+<div>
+  <!-- 展示本地视频 -->
+  <video autoplay class="local-video" #localVideo></video>
+</div>
+<div>
+  <!-- 展示远端视频 -->
+  <video autoplay class="remote-video" #remotevideo></video>
+</div>
+
+<!-- 文本消息展示，和发送 -->
+<div>
+  <section class="message-container" *ngIf="!canPressedConnectButton">
+    <div>
+      消息区:
+    </div>
+    <ul>
+      <li *ngFor="let it of messgaes">{{ it.username }}: {{ it.message }}</li>
+    </ul>
+  </section>
+
+  <section class="send-container" *ngIf="!canPressedConnectButton">
+    <div>发送消息:</div>
+    <div>
+      <input type="text" placeholder="Hi..." #msg />
+      <button (click)="send(msg.value); msg.value = ''">发送</button>
+    </div>
+  </section>
+
+  <label>
+    发送图片给另一端
+    <input
+      type="file"
+      style="margin: 2em;"
+      name=""
+      (change)="getFile(file.files)"
+      #file
+    />
+  </label>
+</div>
+
+<div>
+  <button (click)="connect()" [disabled]="!canPressedConnectButton">
+    连接
+  </button>
+  <button (click)="leave()" [disabled]="canPressedConnectButton">退出</button>
+</div>

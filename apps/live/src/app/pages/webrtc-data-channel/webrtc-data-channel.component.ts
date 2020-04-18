@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, ElementRef, ViewChild } from '@angular/core';
 import { MediaDevicesService } from '../../media-devices.service';
 import * as io from 'socket.io-client';
 import {
@@ -29,11 +29,11 @@ export enum EConnectState {
 export const KROOM_NAME = 'room-p2p';
 
 @Component({
-  selector: 'live-video-example-webrtc-p2p',
-  templateUrl: './webrtc-p2p.component.html',
-  styleUrls: ['./webrtc-p2p.component.styl'],
+  selector: 'live-video-example-webrtc-data-channel',
+  templateUrl: './webrtc-data-channel.component.html',
+  styleUrls: ['./webrtc-data-channel.component.styl'],
 })
-export class WebrtcP2pComponent implements OnDestroy {
+export class WebrtcDataChannelComponent implements OnDestroy {
   constructor(private readonly mediaDevicesService: MediaDevicesService) {}
   ngOnDestroy(): void {
     // 离开页面时，销毁流
@@ -42,13 +42,20 @@ export class WebrtcP2pComponent implements OnDestroy {
     this._closeRemoteStream();
     this.socket?.disconnect();
   }
+  @ViewChild('localVideo')
+  localVideoRef: ElementRef<HTMLVideoElement>;
+
+  @ViewChild('remotevideo')
+  remotevideoRef: ElementRef<HTMLVideoElement>;
 
   localStream?: MediaStream;
   remoteStream?: MediaStream;
+  messgaes = [];
 
   private connectState: EConnectState = EConnectState.init;
   private socket?: SocketIOClient.Socket;
   private pc?: RTCPeerConnection;
+  private dc: RTCDataChannel;
 
   /**
    * 什么时候能按，连接按钮
@@ -58,6 +65,18 @@ export class WebrtcP2pComponent implements OnDestroy {
       this.connectState === EConnectState.init ||
       this.connectState === EConnectState.leaved
     );
+  }
+
+  /**
+   * 发送文本消息
+   */
+  send(message: string) {
+    if (!message) return;
+    this.dc?.send(JSON.stringify({ message }));
+    this.messgaes.push({
+      message,
+      username: 'my',
+    });
   }
 
   /**
@@ -106,6 +125,7 @@ export class WebrtcP2pComponent implements OnDestroy {
         },
         audio: true,
       });
+      this.localVideoRef.nativeElement.srcObject = this.localStream;
     } catch (er) {
       console.error(er);
     }
@@ -129,6 +149,7 @@ export class WebrtcP2pComponent implements OnDestroy {
         this._createPc();
       }
 
+      this._createDc();
       // 其他进入房间后，开始媒体协商
       this.connectState = EConnectState.joinedConnect;
       this._call();
@@ -239,6 +260,72 @@ export class WebrtcP2pComponent implements OnDestroy {
     this.pc = null;
   }
 
+  getFile(fileList: FileList) {
+    if (!fileList.length) return;
+    const file = fileList[0];
+
+    const filename = file.name;
+    const filetype = file.type;
+    const filesize = file.size;
+
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = (e) => {
+      const base64Data = e.target.result as string;
+      this.dc?.send(
+        JSON.stringify({
+          filename,
+          filetype,
+          filesize,
+          type: 'file',
+          message: base64Data,
+        })
+      );
+    };
+  }
+
+  /**
+   * 创建createDataChannel, 当另一方加入房间时创建
+   *
+   * https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/createDataChannel
+   */
+  private _createDc(channel?: RTCDataChannel) {
+    if (!this.pc) return;
+    this.dc = channel || this.pc.createDataChannel('chat', {});
+
+    //  监听别人给我发消息
+    //! 延迟有点大
+    this.dc.onmessage = (e) => {
+      const data = JSON.parse(e.data);
+      if (!data.type) {
+        this.messgaes.push({
+          username: 'other',
+          message: data.message,
+        });
+      } else {
+        console.log('收到对方发来的文件');
+        const base64Data = data.message;
+        const filename = data.filename;
+        const a = document.createElement('a');
+        a.href = base64Data;
+        a.download = filename;
+        a.click();
+        return;
+      }
+    };
+
+    // 打开时
+    this.dc.onopen = () => {
+      if (this.dc.readyState === 'open') {
+        // 能够发文本消息了
+        console.log('能够发文本消息了');
+      }
+    };
+
+    // 关闭时
+    this.dc.onclose = () => {};
+  }
+
   private _createPc() {
     if (!this.pc) {
       const pcConfig = {
@@ -263,10 +350,19 @@ export class WebrtcP2pComponent implements OnDestroy {
         }
       };
 
+      // 监听第一个加入发来的channel消息
+      this.pc.ondatachannel = (e) => {
+        if (!this.dc) {
+          // 如果没有，就直接拿到与对方通信的channel
+          this._createDc(e.channel);
+        }
+      };
+
       // 如果远端有数据过来，那么将收到ontrack事件，那么直接将里面的流放在video上播放
       this.pc.ontrack = (e) => {
         if (e.streams.length) {
           this.remoteStream = e.streams[0];
+          this.remotevideoRef.nativeElement.srcObject = this.remoteStream;
         }
       };
     }

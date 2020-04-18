@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { MediaDevicesService } from '../../media-devices.service';
 import * as io from 'socket.io-client';
 import {
@@ -29,12 +29,75 @@ export enum EConnectState {
 export const KROOM_NAME = 'room-p2p';
 
 @Component({
-  selector: 'live-video-example-webrtc-p2p',
-  templateUrl: './webrtc-p2p.component.html',
-  styleUrls: ['./webrtc-p2p.component.styl'],
+  selector: 'live-video-example-webrtc-p2p-media-control',
+  templateUrl: './webrtc-p2p-media-control.component.html',
+  styleUrls: ['./webrtc-p2p-media-control.component.styl'],
 })
-export class WebrtcP2pComponent implements OnDestroy {
+export class WebrtcP2pMediaControlComponent implements OnDestroy, OnInit {
   constructor(private readonly mediaDevicesService: MediaDevicesService) {}
+  ngOnInit(): void {
+    let lastResult;
+    // 每秒收集一次统计信息
+    setInterval(async () => {
+      if (!this.pc) return;
+      const senders = this.pc.getSenders();
+      if (!senders) return;
+
+      const vSender = senders.find((it) => it.track.kind === 'video');
+      if (!vSender) return;
+
+      // 提供有关整体连接或指定的统计信息的数据进行解析
+      // https://developer.mozilla.org/en-US/docs/Web/API/RTCPeerConnection/getStats
+      const reports = await vSender.getStats();
+
+      //! 端对端完成后才会有数据
+      // 这一块没看懂，没写全
+      // https://developer.mozilla.org/en-US/docs/Web/API/RTCStatsReport
+      reports.forEach(
+        (report: {
+          id: string;
+          timestamp: number;
+          type: string;
+          ssrc: number;
+          isRemote: boolean;
+          mediaType: string;
+          kind: string;
+          trackId: string;
+          transportId: string;
+          codecId: string;
+          firCount: number;
+          pliCount: number;
+          nackCount: number;
+          qpSum: number;
+          mediaSourceId: string;
+          packetsSent: number;
+          retransmittedPacketsSent: number;
+          bytesSent: number;
+          headerBytesSent: number;
+          retransmittedBytesSent: number;
+          framesEncoded: number;
+          keyFramesEncoded: number;
+          totalEncodeTime: number;
+          totalEncodedBytesTarget: number;
+          totalPacketSendDelay: number;
+          qualityLimitationReason: string;
+          qualityLimitationResolutionChanges: number;
+          encoderImplementation: string;
+        }) => {
+          // https://developer.mozilla.org/en-US/docs/Web/API/RTCStatsType
+          if (report.type === 'outbound-rtp') {
+            // 发送的出站RTP流的统计信息
+            if (report.isRemote) return;
+            const curTs = report.timestamp;
+            const bytes = report.bytesSent;
+            const packets = report.packetsSent;
+            console.log(JSON.stringify(report, null, 2));
+          }
+        }
+      );
+      lastResult = reports;
+    }, 1000);
+  }
   ngOnDestroy(): void {
     // 离开页面时，销毁流
     this._closePc();
@@ -45,6 +108,22 @@ export class WebrtcP2pComponent implements OnDestroy {
 
   localStream?: MediaStream;
   remoteStream?: MediaStream;
+
+  /**
+   * 宽带选择
+   */
+  bandWidths = ['不限制', '2000', '1000', '500', '200'];
+
+  /**
+   * 决定什么时候能够改变宽带
+   */
+  bandWidthDisabled = true;
+  openbandWidthSelect() {
+    this.bandWidthDisabled = false;
+  }
+  closebandWidthSelect() {
+    this.bandWidthDisabled = true;
+  }
 
   private connectState: EConnectState = EConnectState.init;
   private socket?: SocketIOClient.Socket;
@@ -58,6 +137,52 @@ export class WebrtcP2pComponent implements OnDestroy {
       this.connectState === EConnectState.init ||
       this.connectState === EConnectState.leaved
     );
+  }
+
+  /**
+   * 改变宽带事件
+   * @param bw 选择的宽带限制，默认单位是 kb
+   */
+  async bandWidthChange(bw: string) {
+    if (!this.pc) return;
+    this.closebandWidthSelect(); // 避免连续改变，设置[setParameters]成功后才能继续改变
+
+    // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCPeerConnection/getSenders
+    // 返回一个RTCRtpSender对象数组，每个对象代表负责传输一个轨道的数据的RTP发送方。发送方对象提供了用于检查和控制轨道数据的编码和传输的方法和属性。
+    // !一般senders的长度就只有2，一个video，一个audio
+    const senders = this.pc.getSenders();
+    const vSender = senders.find((it) => it.track.kind === 'video');
+    if (!vSender) return console.error('not find vSender');
+
+    // 该对象描述该RTCRtpSender.track属性上媒体的编码和传输的当前配置
+    // https://developer.mozilla.org/zh-CN/docs/Web/API/RTCRtpSender/getParameters
+    const parameters = vSender.getParameters();
+
+    // !只有在端到端的连接建立完成后，你才能看到encodings里面的数据
+    // console.log(parameters.encodings);
+
+    if (!parameters.encodings) parameters.encodings = [{}];
+    if (!parameters.encodings.length)
+      return console.error(
+        `设置失败 encodings: ${parameters.encodings.length}`
+      );
+
+    if (bw === '不限制') {
+      // 默认为不限制，encoding上没有maxBitrate属性
+      delete parameters.encodings[0].maxBitrate;
+    } else {
+      // !如果强制设置，在chrome上可能出现错误
+      // https://stackoverflow.com/questions/57400849/webrtc-change-bandwidth-receiving-invalidmodificationerror-on-chrome
+      parameters.encodings[0].maxBitrate = +bw * 1000;
+    }
+
+    try {
+      await vSender.setParameters(parameters);
+      this.openbandWidthSelect();
+      console.log(`set maxBitrate ok.`);
+    } catch (er) {
+      console.error(`set maxBitrate error.`, er);
+    }
   }
 
   /**
@@ -163,6 +288,7 @@ export class WebrtcP2pComponent implements OnDestroy {
               new RTCSessionDescription(message) // 从远端发来的数据，需要从新构造下
             );
             const answer = await this.pc.createAnswer();
+            this.openbandWidthSelect();
             await this.pc.setLocalDescription(answer);
 
             // 发消息给远端, answer已经准备好了
@@ -171,6 +297,7 @@ export class WebrtcP2pComponent implements OnDestroy {
 
           case 'answer':
             // 收到远端answer准备完毕的信息
+            this.openbandWidthSelect();
             await this.pc.setRemoteDescription(
               new RTCSessionDescription(message)
             );

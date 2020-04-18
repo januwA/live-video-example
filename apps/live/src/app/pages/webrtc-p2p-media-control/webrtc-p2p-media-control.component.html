@@ -8,6 +8,20 @@
   <video autoplay class="remote-video" [srcObject]="remoteStream"></video>
 </div>
 <div>
-  <button (click)="connect()" [disabled]="!canPressedConnectButton">连接</button>
+  <button (click)="connect()" [disabled]="!canPressedConnectButton">
+    连接
+  </button>
   <button (click)="leave()" [disabled]="canPressedConnectButton">退出</button>
+
+  <label>
+    宽带限制:
+    <select
+      [disabled]="bandWidthDisabled"
+      (change)="bandWidthChange(bandWidth.value)"
+      #bandWidth
+    >
+      <option *ngFor="let it of bandWidths">{{ it }}</option>
+    </select>
+    kbps
+  </label>
 </div>

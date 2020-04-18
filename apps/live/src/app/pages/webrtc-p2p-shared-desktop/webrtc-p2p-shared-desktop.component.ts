@@ -26,20 +26,18 @@ export enum EConnectState {
   leaved, // 退出
 }
 
-export const KROOM_NAME = 'room-p2p';
+export const KROOM_NAME = 'room-p2p-desktop';
 
 @Component({
-  selector: 'live-video-example-webrtc-p2p',
-  templateUrl: './webrtc-p2p.component.html',
-  styleUrls: ['./webrtc-p2p.component.styl'],
+  selector: 'live-video-example-webrtc-p2p-shared-desktop',
+  templateUrl: './webrtc-p2p-shared-desktop.component.html',
+  styleUrls: ['./webrtc-p2p-shared-desktop.component.styl'],
 })
-export class WebrtcP2pComponent implements OnDestroy {
+export class WebrtcP2pSharedDesktopComponent implements OnDestroy {
   constructor(private readonly mediaDevicesService: MediaDevicesService) {}
   ngOnDestroy(): void {
     // 离开页面时，销毁流
-    this._closePc();
-    this._closeLocalStream();
-    this._closeRemoteStream();
+    this.leave();
     this.socket?.disconnect();
   }
 
@@ -99,11 +97,8 @@ export class WebrtcP2pComponent implements OnDestroy {
    */
   private async _startLocalStream() {
     try {
-      this.localStream = await this.mediaDevicesService.getUserMedia({
-        video: {
-          width: 320,
-          height: 240,
-        },
+      this.localStream = await this.mediaDevicesService.getDisplayMedia({
+        video: true,
         audio: true,
       });
     } catch (er) {
@@ -143,8 +138,11 @@ export class WebrtcP2pComponent implements OnDestroy {
 
     this.socket.on(BYE_EVENT, (data: IP2PResult) => {
       // 别人离开后，自己处于未绑定状态
+      console.log(BYE_EVENT);
+
       this.connectState = EConnectState.joinedUnbind;
       this._closePc();
+      this._closeRemoteStream();
     });
 
     this.socket.on(LEAVED_EVENT, (data: IP2PResult) => {

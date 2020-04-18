@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 
 import { AppComponent } from './app.component';
 import { HttpClientModule } from '@angular/common/http';
@@ -15,6 +16,9 @@ import { RecordDesktopComponent } from './pages/record-desktop/record-desktop.co
 import { SocketIoMessageComponent } from './pages/socket-io-message/socket-io-message.component';
 import { WebrtcP2pComponent } from './pages/webrtc-p2p/webrtc-p2p.component';
 import { LocalP2pComponent } from './pages/local-p2p/local-p2p.component';
+import { WebrtcP2pSharedDesktopComponent } from './pages/webrtc-p2p-shared-desktop/webrtc-p2p-shared-desktop.component';
+import { WebrtcP2pMediaControlComponent } from './pages/webrtc-p2p-media-control/webrtc-p2p-media-control.component';
+import { WebrtcDataChannelComponent } from './pages/webrtc-data-channel/webrtc-data-channel.component';
 
 @NgModule({
   declarations: [
@@ -30,8 +34,11 @@ import { LocalP2pComponent } from './pages/local-p2p/local-p2p.component';
     SocketIoMessageComponent,
     WebrtcP2pComponent,
     LocalP2pComponent,
+    WebrtcP2pSharedDesktopComponent,
+    WebrtcP2pMediaControlComponent,
+    WebrtcDataChannelComponent,
   ],
-  imports: [AppRoutingModule, BrowserModule, HttpClientModule],
+  imports: [AppRoutingModule, BrowserModule, HttpClientModule, FormsModule],
   providers: [],
   bootstrap: [AppComponent],
 })
