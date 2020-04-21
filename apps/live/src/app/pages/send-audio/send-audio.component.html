@@ -1,0 +1,16 @@
+<h2>当前人数({{count}})</h2>
+<section>
+  <ul>
+    <li *ngFor="let it of audios">
+      {{ it.self ? 'self' : 'other' }}:
+      <button (click)="play(it)">点击播放</button>
+    </li>
+  </ul>
+</section>
+<section>
+  <button class="long-button" (pointerup)="stop()" #longButton>
+    按住 说话
+  </button>
+</section>
+
+<audio #playAudio></audio>

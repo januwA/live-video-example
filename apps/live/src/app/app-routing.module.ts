@@ -14,6 +14,7 @@ import { LocalP2pComponent } from './pages/local-p2p/local-p2p.component';
 import { WebrtcP2pSharedDesktopComponent } from './pages/webrtc-p2p-shared-desktop/webrtc-p2p-shared-desktop.component';
 import { WebrtcP2pMediaControlComponent } from './pages/webrtc-p2p-media-control/webrtc-p2p-media-control.component';
 import { WebrtcDataChannelComponent } from './pages/webrtc-data-channel/webrtc-data-channel.component';
+import { SendAudioComponent } from './pages/send-audio/send-audio.component';
 
 const routes: Routes = [
   {
@@ -112,6 +113,13 @@ const routes: Routes = [
     component: WebrtcDataChannelComponent,
     data: {
       title: 'WebRTC 非音视频数据传输',
+    },
+  },
+  {
+    path: 'send-audio',
+    component: SendAudioComponent,
+    data: {
+      title: '发送语音包聊天',
     },
   },
 ];

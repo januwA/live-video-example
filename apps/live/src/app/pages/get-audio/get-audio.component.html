@@ -1,3 +1,4 @@
 <audio autoplay controls #audio></audio>
 
-<button (click)="download()">download</button>
+<button (click)="start()" [disabled]="isStart">开始录制音频</button>
+<button (click)="download()" [disabled]="!isStart">download</button>

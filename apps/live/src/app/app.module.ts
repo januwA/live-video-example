@@ -19,6 +19,7 @@ import { LocalP2pComponent } from './pages/local-p2p/local-p2p.component';
 import { WebrtcP2pSharedDesktopComponent } from './pages/webrtc-p2p-shared-desktop/webrtc-p2p-shared-desktop.component';
 import { WebrtcP2pMediaControlComponent } from './pages/webrtc-p2p-media-control/webrtc-p2p-media-control.component';
 import { WebrtcDataChannelComponent } from './pages/webrtc-data-channel/webrtc-data-channel.component';
+import { SendAudioComponent } from './pages/send-audio/send-audio.component';
 
 @NgModule({
   declarations: [
@@ -37,6 +38,7 @@ import { WebrtcDataChannelComponent } from './pages/webrtc-data-channel/webrtc-d
     WebrtcP2pSharedDesktopComponent,
     WebrtcP2pMediaControlComponent,
     WebrtcDataChannelComponent,
+    SendAudioComponent,
   ],
   imports: [AppRoutingModule, BrowserModule, HttpClientModule, FormsModule],
   providers: [],
