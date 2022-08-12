@@ -8,26 +8,25 @@ import { ExpressAdapter } from '@nestjs/platform-express';
 
 import { AppModule } from './app/app.module';
 
-const httpsOptions = {
-  key: fs.readFileSync('D:/localhost_ssl/dev.ajanuw.com.key'),
-  cert: fs.readFileSync('D:/localhost_ssl/dev.ajanuw.com.crt'),
-};
+// const httpsOptions = {
+//   key: fs.readFileSync('D:/localhost_ssl/dev.ajanuw.com.key'),
+//   cert: fs.readFileSync('D:/localhost_ssl/dev.ajanuw.com.crt'),
+// };
 const globalPrefix = 'api';
 const port = process.env.port || 3333;
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, {
-    httpsOptions,
+    // httpsOptions,
   });
 
   app.setGlobalPrefix(globalPrefix);
-  // app.enableCors({
-  //   origin: 'https://dev.ajanuw.com:4200'
-  //   credentials: true,
-  // });
+  app.enableCors({
+    origin: '*',
+    credentials: true
+  });
   await app.listen(port, () => {
-    console.log(`https://dev.ajanuw.com:${port}/api/hello`);
-    
+    console.log(`http://localhost:${port}/api/hello`);
   });
 }
 

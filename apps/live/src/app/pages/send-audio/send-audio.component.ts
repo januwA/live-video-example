@@ -13,6 +13,7 @@ import {
   JOINED_EVENT,
   LEAVE_EVENT,
   LEAVED_EVENT,
+  SERVER_IP,
 } from '@live-video-example/p2p';
 import { bindLongEvent } from 'apps/live/src/utils';
 
@@ -85,7 +86,7 @@ export class SendAudioComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private _initSocket() {
-    this.socket = io(`https://dev.ajanuw.com:3333/audio`);
+    this.socket = io(`${SERVER_IP}/audio`);
 
     this.socket.on(JOINED_EVENT, (data) => {
       this.count = data.count;

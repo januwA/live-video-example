@@ -43,7 +43,7 @@ export class P2PGateway implements OnGatewayConnection, OnGatewayDisconnect {
   /**
    * 这个钩子类似 io.on('connection', (socket) => ...);
    *
-   * 当客户端调用 io('https://dev.ajanuw.com:3333/socket-io-message') 首次连接时触发
+   * 当客户端调用 io('http://localhost:3333/socket-io-message') 首次连接时触发
    *
    * @param client
    * @param args

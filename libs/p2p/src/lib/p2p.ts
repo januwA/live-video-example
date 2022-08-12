@@ -8,6 +8,8 @@ export const BYE_EVENT = 'bye';
 export const LEAVED_EVENT = 'leaved';
 export const MESSAGE_EVENT = 'message';
 
+export const SERVER_IP = 'http://localhost:3333';
+
 export interface IP2PPayload {
   roomName: string;
 }

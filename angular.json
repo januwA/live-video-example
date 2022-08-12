@@ -60,7 +60,8 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
             "browserTarget": "live:build",
-            "proxyConfig": "apps/live/proxy.conf.json"
+            "proxyConfig": "apps/live/proxy.conf.json",
+            "disableHostCheck": true
           },
           "configurations": {
             "production": {
@@ -91,33 +92,6 @@
             "tsConfig": "apps/live/tsconfig.spec.json",
             "passWithNoTests": true,
             "setupFile": "apps/live/src/test-setup.ts"
-          }
-        }
-      }
-    },
-    "live-e2e": {
-      "root": "apps/live-e2e",
-      "sourceRoot": "apps/live-e2e/src",
-      "projectType": "application",
-      "architect": {
-        "e2e": {
-          "builder": "@nrwl/cypress:cypress",
-          "options": {
-            "cypressConfig": "apps/live-e2e/cypress.json",
-            "tsConfig": "apps/live-e2e/tsconfig.e2e.json",
-            "devServerTarget": "live:serve"
-          },
-          "configurations": {
-            "production": {
-              "devServerTarget": "live:serve:production"
-            }
-          }
-        },
-        "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
-          "options": {
-            "tsConfig": ["apps/live-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/live-e2e/**"]
           }
         }
       }

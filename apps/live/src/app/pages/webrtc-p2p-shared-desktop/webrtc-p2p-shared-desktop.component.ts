@@ -15,6 +15,7 @@ import {
   IP2PMessagePayload,
   IP2PResult,
   IP2PMessageResult,
+  SERVER_IP,
 } from '@live-video-example/p2p';
 
 export enum EConnectState {
@@ -110,7 +111,7 @@ export class WebrtcP2pSharedDesktopComponent implements OnDestroy {
    * 初始化与socket服务器的连接
    */
   private _initSocket() {
-    this.socket = io(`https://dev.ajanuw.com:3333/${P2P_NAMESPACE}`);
+    this.socket = io(`${SERVER_IP}/${P2P_NAMESPACE}`);
 
     this.socket.on(JOINED_EVENT, (data: IP2PResult) => {
       this.connectState = EConnectState.joined;

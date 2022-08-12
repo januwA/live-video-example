@@ -89,7 +89,7 @@ export class SocketIoMessageComponent implements OnInit, OnDestroy {
 
   private _initSocket() {
     if (this.socket) return;
-    this.socket = io('https://dev.ajanuw.com:3333/socket-io-message');
+    this.socket = io('http://localhost:3333/socket-io-message');
     this._initSocketEvents();
   }
 

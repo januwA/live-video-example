@@ -1,0 +1,23 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/out-tsc",
+    "types": [
+      "node"
+    ],
+    "paths": {
+      "@live-video-example/api-interfaces": [
+        "libs/api-interfaces/src/index.ts"
+      ],
+      "@live-video-example/p2p": [
+        "libs/p2p/src/index.ts"
+      ]
+    }
+  },
+  "exclude": [
+    "**/*.spec.ts"
+  ],
+  "include": [
+    "**/*.ts"
+  ]
+}
